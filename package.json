@@ -1,0 +1,15 @@
+{
+  "name": "test-aws-sdk-js",
+  "version": "0.0.0",
+  "description": "messing around",
+  "main": "index.js",
+  "scripts": {
+  },
+  "dependencies": {
+      "aws-sdk":           "git://github.com/aws/aws-sdk-js.git",
+      "underscore":        "git://github.com/documentcloud/underscore.git",
+      "async":             "git://github.com/caolan/async.git"      
+  },  
+  "author": "Mark Essel",
+  "license": "BSD"
+}
