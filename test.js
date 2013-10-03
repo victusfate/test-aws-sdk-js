@@ -105,28 +105,48 @@ fs.readdir(sUploadPath,function(err,aFiles) {
                         var down = function(sFile) {
                             console.log('sFile',sFile);
 
-                            var file = fs.createWriteStream(path.join(sDownloadPath,sFile));
-                            var s3ReadStream = s3.getObject({Key: sFile}).createReadStream();
-                            s3ReadStream.pipe(file);
-                            s3ReadStream.on('end',function(err) {
+                            s3.getObject({Key: sFile}, function(err, data) {
                                 if (err) {
-                                    clearInterval(iTimeout);
-                                    console.log({ status:'s3ReadStream error',err:err });
-                                }
-                                else {
-                                    file.on('close',function(err) {
-                                        if (err) {
-                                            clearInterval(iTimeout);
-                                            console.log({ status:'file write stream error',err:err });
+                                    console.log("Error downloading data: ", err);
+                                } else {
+                                    console.log("Successfully downloaded data from messel.test.cameo.tv/myKey ");
+                                    fs.writeFile(path.join(sDownloadPath,sFile), data.Body, { encoding: 'binary'}, 
+                                        function(err) {
+                                            if (err) {
+                                                clearInterval(iTimeout);
+                                                console.log({ status:'file write error',err:err });
+                                            }
+                                            else {
+                                                count++;
+                                                console.log('Successfully downloaded and wrote file',sFile);
+                                                delete oFiles[sFile];
+                                            }
                                         }
-                                        else {
-                                            count++;
-                                            console.log('Successfully downloaded file',sFile);
-                                            delete oFiles[sFile];
-                                        }
-                                    });
+                                    );
                                 }
-                            });
+                            }); 
+                            // var file = fs.createWriteStream(path.join(sDownloadPath,sFile));
+                            // var s3ReadStream = s3.getObject({Key: sFile}).createReadStream();
+                            // s3ReadStream.pipe(file);
+                            // s3ReadStream.on('end',function(err) {
+                            //     if (err) {
+                            //         clearInterval(iTimeout);
+                            //         console.log({ status:'s3ReadStream error',err:err });
+                            //     }
+                            //     else {
+                            //         file.on('close',function(err) {
+                            //             if (err) {
+                            //                 clearInterval(iTimeout);
+                            //                 console.log({ status:'file write stream error',err:err });
+                            //             }
+                            //             else {
+                            //                 count++;
+                            //                 console.log('Successfully downloaded file',sFile);
+                            //                 delete oFiles[sFile];
+                            //             }
+                            //         });
+                            //     }
+                            // });
                         };
                         down(aFiles[iFile]);
                     }
