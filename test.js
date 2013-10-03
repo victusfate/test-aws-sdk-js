@@ -108,6 +108,7 @@ fs.readdir(sUploadPath,function(err,aFiles) {
                             s3.getObject({Key: sFile}, function(err, data) {
                                 if (err) {
                                     console.log("Error downloading data: ", err);
+                                    process.exit(1);
                                 } else {
                                     console.log("Successfully downloaded data from messel.test.cameo.tv/myKey ");
                                     fs.writeFile(path.join(sDownloadPath,sFile), data.Body, { encoding: 'binary'}, 
@@ -115,6 +116,7 @@ fs.readdir(sUploadPath,function(err,aFiles) {
                                             if (err) {
                                                 clearInterval(iTimeout);
                                                 console.log({ status:'file write error',err:err });
+                                                process.exit(1);
                                             }
                                             else {
                                                 count++;
@@ -167,7 +169,7 @@ fs.readdir(sUploadPath,function(err,aFiles) {
                     if (err) {
                         console.log('error reading file',sFile);
                         clearInterval(iTimeout);
-                        return err;
+                        process.exit(1);
                     }
                     else {
                         console.log('successfully read file',sFile);
@@ -177,6 +179,7 @@ fs.readdir(sUploadPath,function(err,aFiles) {
                             if (err) {
                                 console.log("Error uploading data: ", err);
                                 clearInterval(iTimeout);
+                                process.exit(1);
                             } 
                             else {
                                 console.log(sFile,'made it up aok');
